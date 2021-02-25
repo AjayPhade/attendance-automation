@@ -10,10 +10,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 const admin = require("firebase-admin");
 
-const serviceAccount = require("d:/attendance-automation-ds-firebase-adminsdk-ct6f0-692899d849.json");
+// const serviceAccount = require("d:/attendance-automation-ds-firebase-adminsdk-ct6f0-692899d849.json");
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert({
+        "type": "service_account",
+        "project_id": "attendance-automation-ds",
+        "private_key_id": "692899d84958df0fdc5142a5b5253e0f544010cd",
+        "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC/Z1jkSh8O/+cI\n6vuhNX914GSPBMOde4RELbCoKNWf3zMyZN2dN+1sOolHZp2WNwQwXtm8ET0Zs3Om\njQA3JWq/1VaQNQ1XgDZSbtR+BSK4WEcpjNVBpuWFzbtj6Glhy1e+woG01wPGGx4a\nsM8LBRC6AogWZHiUUYCA1lQEWVF/O5aNXsRwnR7TZo1br2RYKA4zRwPE3LNqW3wL\nY2eijXJ1Z1SpElhmt4TJYLqTKByk5/jn9VJfk/LVWJuQcnI0iUaMfYsSEFzZCh2t\n4rnz8sPZheO2GWZjDkKtvK7ke4Q+vxojlNtyW2xaaKZozJ14dp+OzT0aF0arW09k\npDn26NzFAgMBAAECggEAB59UFav9qSatRXhlgsxt3JyjUePAw4qEoFoedSVCfqOl\nobiNGnf8oJ5YfbYF3r0m/E3RXNE7Q5pXJ8yT3okDA4vkLt7XVBhTHCd1lxAuy18Z\nSbu7Tr+YrTezIlMs29wRzOho6xyooJDPZdo2i0E4IuQ7awLfdMP7JVuuYbRJ5SfB\nYvUNSOOVedQrRKrf2luTB9CSJi8vz00yqRM2i+W+n22OYp7zwqOVzoUzgk6Al/9t\n3jnZOoN9aYJq/bcuqGwkGZWj1uCLByqQJJO3kzVnvQb4K85EQzim/FwanFZZDogz\nhcRADkfGfdD0cImurVOzXuO3vEDK4CE9/d1AGLSEYQKBgQDzEPB8IcLVMpn8pitx\n5vO1p1728kUnif4xMIJvq2nKF2IaxkgjcldcqBIpaR3Q6gRYA+NhEIPy2smoNie9\nAWKMhOoK8qetHEm+pBfT5gY+ZyiW1XtgiLOlxACpoUAyDQ9s690cruwCpXRbF6f/\ne4ZXRO3sdZ04Xexf8CJdmZVKZQKBgQDJlqirdr8MhSHkTcHz39iWf+Wqtc2VwG+r\n0gGQBdLnvUUwc78Poa21V1Po8Ypuql4L6/gqmvw56nCPTol61fBcCisV8P4O85Th\nSNw0T5hqoF8gzyXAuAYGYV4nXr/Ss0zAB3CukVyebZOQJolfamATETnxlyifXXNv\ne0BmQ3Py4QKBgQCJCbLb+VjURGwm0jTKSfB7KPrUdXDhwt4KM5RGizjglGBeQg4n\n1e5FMgjTSg1iXJ3IVaDbd6k8wXdSG/45hE9gdAtT0s0QP1OgZPl+IUDB6/0pVQDz\nQv8t5RyOhngf/9cDjNMjucccEtZQCT1RP/5Us2sElqbmQaXjzQpDBTTzNQKBgAr/\nG+5WiO9u571jfHwILvFuwqGAT1mm6LCPwSQRHUMk8PxGpBp/MFGfFOW1H18QDhdK\nZPw1/iJOpps6poc72mO67kTBI6q/INT1O4Xi/aZ7XxUUF7Qelb2NXCx7n60nuL0U\n6tGq/klqIs2PPJkm3VzM6MNEAqRG3cAsEgRCE7YhAoGAVKa2k+fss2q08Lv3ETnB\nhKUfXV5IL0npW9fIU55qkz8jPTnK8K1v048GPb3RIdhUptHV7dKsDRxY+XV4COUB\n4oGnqOtinTHx/VdewUD25YLzFrGGxZeQBiDXbgs4SZX6o6lC+UdZLUF4NY8Un01E\n+3axW2tccTdP0AFd8A86z0o=\n-----END PRIVATE KEY-----\n",
+        "client_email": "firebase-adminsdk-ct6f0@attendance-automation-ds.iam.gserviceaccount.com",
+        "client_id": "104480239290708607761",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ct6f0%40attendance-automation-ds.iam.gserviceaccount.com"
+    }),
     databaseURL: "https://attendance-automation-ds-default-rtdb.firebaseio.com"
 });
 
@@ -163,6 +174,8 @@ app.listen(3000, () => {
     // fetch('https://api.github.com/users/github')
     // .then(res => res.json())
     // .then(json => console.log(json));
+
+    console.log(users);
 
     var UTCDate = new Date().getUTCHours();
     var date = new Date().getHours();
