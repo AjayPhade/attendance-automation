@@ -1,5 +1,16 @@
 .main {
-  height: 600px;
+  height: 500px;
   margin: 0;
   align-items: center;
+}
+
+.time {
+  margin-left: 100px;
+}
+
+.line {
+  width: auto;
+  border-left: 2px solid gray;
+  height: inherit;
+  margin-left: -2%;
 }

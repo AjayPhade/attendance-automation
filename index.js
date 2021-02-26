@@ -31,7 +31,7 @@ admin.initializeApp({
 const database = admin.database().ref();
 const users = database.child('users');
 
-function submitForm(formLink, uniqueID, res) {
+function submitForm(formLink, uniqueID, time, res) {
     const formID = formLink.split('/')[6];
 
     const formURL = 'https://docs.google.com/forms/d/e/' + formID + '/formResponse';
@@ -48,7 +48,17 @@ function submitForm(formLink, uniqueID, res) {
                 console.log('No Data Available for ' + uniqueID);
                 res.send('No Data Available for ' + uniqueID + '<br>Upload the data first');
             } else {
-                data = convertData(uniqueID, data);
+                const date = getDate();
+
+                if (data.lastSubmit === date) {
+                    console.log(uniqueID + ' tried to send the form again in single day');
+                    res.send('You already have given attendace for today');
+                    return;
+                }
+
+                data = convertData(data, date, time);
+
+                console.log(data);
 
                 var params = new URLSearchParams(data);
 
@@ -58,6 +68,15 @@ function submitForm(formLink, uniqueID, res) {
                     if (resposne.ok) { // res.status >= 200 && res.status < 300
                         console.log('Done');
                         res.send('Done');
+
+                        users.child(uniqueID).update({ lastSubmit: date }, err => {
+                            if (err) {
+                                console.error(err);
+                                throw new Error();
+                            } else {
+                                console.log('Last date updated successfully');
+                            }
+                        });
                     } else {
                         console.log(resposne.statusText);
                         res.send(resposne.statusText);
@@ -69,7 +88,7 @@ function submitForm(formLink, uniqueID, res) {
             res.send('No Data Available');
         }
     }).catch(err => {
-        console.log(err);
+        console.error(err);
         res.send(err)
     });
 }
@@ -84,16 +103,17 @@ function uploadData(uniqueID, data, res) {
 
             users.child(uniqueID).set(data, err => {
                 if (err) {
-                    console.log(err);
+                    console.error(err);
                     res.send(err);
                 } else {
                     console.log('Data uploaded successfully');
-                    res.send('Data uploaded successfully');
+                    res.send(`Data uploaded successfully
+                            <br>Your Unique ID: ${uniqueID}`);
                 }
             });
         }
     }).catch(err => {
-        console.log(err);
+        console.error(err);
         res.send(err);
     });
 }
@@ -114,15 +134,44 @@ function generateID(_class, rollNo) {
     }
 }
 
-function convertData(data) {
+function getDate() {
+    var date = new Date();
+
+    console.log('UTC/GMT:', date);
+
+    const year = new Intl.DateTimeFormat('en-in', {
+        timeZone: 'Asia/Kolkata',
+        year: 'numeric',
+    }).format(date);
+
+    const month = new Intl.DateTimeFormat('en-in', {
+        timeZone: 'Asia/Kolkata',
+        month: '2-digit'
+    }).format(date);
+
+    const day = new Intl.DateTimeFormat('en-in', {
+        timeZone: 'Asia/Kolkata',
+        day: '2-digit'
+    }).format(date);
+
+    date = year + '-' + month + '-' + day;
+
+    console.log(date);
+
+    return date;
+}
+
+function convertData(data, date, time) {
     const entry = {
-        669753067: data.rollNo,
-        679409453: data.subject,
-        1485670224: data.fullName,
-        1501085151: data._class,
-        1644672609: data.email,
-        1718818963: data.mobile,
-        emailAddress: data.email
+        'entry.669753067': data.rollNo,
+        'entry.679409453': data.subject,
+        'entry.1485670224': data.fullName,
+        'entry.1501085151': data._class,
+        'entry.1644672609': data.email,
+        'entry.1718818963': data.mobile,
+        'entry.1395348466': date,
+        'entry.1313054489': time,
+        emailAddress: data.email,
     };
 
     return entry;
@@ -134,11 +183,13 @@ app.get('/', (req, res) => {
 
 app.get('/lol', (req, res) => {
     console.log('lol');
+    console.log(req.query);
 
     const formLink = req.query.formLink;
     const uniqueID = req.query.uniqueID;
+    const time = req.query.time;
 
-    submitForm(formLink, uniqueID, res);
+    submitForm(formLink, uniqueID, time, res);
 
     // res.sendFile(__dirname + '/public/index.html');
 });
@@ -160,6 +211,10 @@ app.get('/upload', (req, res) => {
     uploadData(uniqueID, data, res);
 });
 
+app.get('/*', (req, res) => {
+    res.send('Nothing here');
+});
+
 app.listen(process.env.PORT || 3000, () => {
     console.log("Server started at port 3000");
 
@@ -175,9 +230,53 @@ app.listen(process.env.PORT || 3000, () => {
     // .then(res => res.json())
     // .then(json => console.log(json));
 
-    console.log(users);
+    // console.log(users);
 
-    var UTCDate = new Date().getUTCHours();
-    var date = new Date().getHours();
-    console.log(UTCDate, date);
+    // var UTCDate = new Date().getUTCHours();
+    // var date = new Date().getHours();
+    // console.log(UTCDate, date);
+
+    // const unixTimeZero = Date.parse('01 Jan 1970 00:00:00 GMT');
+    // const javaScriptRelease = Date.parse('04 Dec 1995 00:12:00 GMT');
+
+    // console.log(unixTimeZero);
+    // // expected output: 0
+
+    // console.log(javaScriptRelease);
+    // // expected output: 818035920000
+
+    // date = new Date(javaScriptRelease);
+
+    // console.log(date.toISOString());
+
+    // console.log(date);
+
+    var date = new Date();
+
+    console.log('UTC/GMT:', date);
+
+    const year = new Intl.DateTimeFormat('en-in', {
+        timeZone: 'Asia/Kolkata',
+        year: 'numeric',
+    }).format(date);
+
+    const month = new Intl.DateTimeFormat('en-in', {
+        timeZone: 'Asia/Kolkata',
+        month: '2-digit'
+    }).format(date);
+
+    const day = new Intl.DateTimeFormat('en-in', {
+        timeZone: 'Asia/Kolkata',
+        day: '2-digit'
+    }).format(date);
+
+    const time = new Intl.DateTimeFormat('en-in', {
+        timeZone: 'Asia/Kolkata',
+        timeStyle: 'short',
+        hour12: false
+    }).format(date);
+
+    date = year + '-' + month + '-' + day;
+
+    console.log('IST:', date + ' ' + time);
 });
