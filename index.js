@@ -52,7 +52,7 @@ function submitForm(formLink, uniqueID, time, res) {
 
                 if (data.lastSubmit === date) {
                     console.log(uniqueID + ' tried to send the form again in single day');
-                    res.send('You already have given attendace for today');
+                    res.send('You already have given attendance today');
                     return;
                 }
 
