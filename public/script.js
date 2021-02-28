@@ -39,10 +39,15 @@ console.log('IST:', time);
 
 console.log(toMinutes(time) > toMinutes('16:17'));
 
-const times = ['09:00', '09:50', '10:50', '11:40'];
+var startTime = [];
 
-for (var i = times.length - 1; i >= 0; i--)
-    if (toMinutes(time) > toMinutes(times[i])) {
+for (var i = 0; i < 4; i++)
+    startTime[i] = document.getElementById('time' + i).value;
+
+console.log(startTime);
+
+for (var i = startTime.length - 1; i >= 0; i--)
+    if (toMinutes(time) > toMinutes(startTime[i])) {
         document.getElementById('time' + i).checked = true;
         // document.getElementById('time' + i).toggleAttribute('checked');
         break;
