@@ -216,7 +216,7 @@ app.get('/*', (req, res) => {
 });
 
 app.listen(process.env.PORT || 3000, () => {
-    console.log("Server started at port " + (process.env.PORT !== undefined ? process.env.PORT : 3000));
+    console.log("Server started at port " + (process.env.PORT || 3000));
 
     // users.on('value', snap => {
     // console.log(snap.val());
