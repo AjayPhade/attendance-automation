@@ -41,13 +41,13 @@ console.log(toMinutes(time) > toMinutes('16:17'));
 
 var startTime = [];
 
-for (var i = 0; i < 4; i++)
+for (var i = 0; i < 5; i++)
     startTime[i] = document.getElementById('time' + i).value;
 
 console.log(startTime);
 
 for (var i = startTime.length - 1; i >= 0; i--)
-    if (toMinutes(time) > toMinutes(startTime[i])) {
+    if (toMinutes(time) >= toMinutes(startTime[i])) {
         document.getElementById('time' + i).checked = true;
         // document.getElementById('time' + i).toggleAttribute('checked');
         break;
