@@ -9,6 +9,7 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const admin = require("firebase-admin");
+const { response } = require("express");
 
 // const serviceAccount = require("d:/attendance-automation-ds-firebase-adminsdk-ct6f0-692899d849.json");
 
@@ -64,10 +65,10 @@ function submitForm(formLink, uniqueID, time, res) {
 
                 var options = { method: 'POST', body: params };
 
-                fetch(formURL, options).then(resposne => {
-                    if (resposne.ok) { // res.status >= 200 && res.status < 300
+                fetch(formURL, options).then(response => {
+                    if (response.ok) { // res.status >= 200 && res.status < 300
                         console.log('Done');
-                        res.send('Done');
+                        response.text().then(text => res.send(text));
 
                         users.child(uniqueID).update({ lastSubmit: date }, err => {
                             if (err) {
@@ -78,8 +79,8 @@ function submitForm(formLink, uniqueID, time, res) {
                             }
                         });
                     } else {
-                        console.log(resposne.statusText);
-                        res.send(resposne.statusText);
+                        console.log(response.statusText);
+                        res.send(response.statusText);
                     }
                 });
             }
